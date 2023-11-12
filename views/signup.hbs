@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        h1 {
+            text-align: center;
+            margin-bottom: 60px;
+            margin-top: 20px;
+            margin-left: -40px;
+
+        }
+
+        p {
+            margin-top: 30px
+        }
+
+        small {
+            margin-left: 5px;
+            font-size: 15px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container mt-3 h-25">
+        <div class="row justify-content-center align-items-center ">
+            <div class="col-md-6">
+                <h1>SignUp</h1>
+                <form class="p-5 border border-primary rounded-5 bg-warning" action="signup" method="post"
+                    onsubmit="return validateForm()">
+                    <div class="form-group">
+                        <label class="mb-1 fw-bold font-monospace fst-italic fs-5" for="userName">Username</label>
+                        <input type="text" class="form-control" id="exampleInputText" name="userName"
+                            placeholder="Enter your username" value="{{enteredName}}">
+                        <small id="nameError" style="color: red;"></small>
+                    </div>
+                    <div class="form-group">
+                        <label class="mb-1 fw-bold font-monospace fst-italic fs-5" for="userMail">Email</label>
+                        <input type="email" class="form-control" id="exampleInputEmail" name="userMail"
+                            placeholder="Enter your email" value="{{enteredMail}}">
+                        <small id="mailError" style="color: red;">{{replace}}</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="mb-1 fw-bold font-monospace fst-italic fs-5" for="userPassword">Password</label>
+                        <input type="password" class="form-control" id="exampleInputPassword" name="userPassword"
+                            placeholder="Enter your password" value="{{enteredPassword}}">
+                        <small id="passwordError" style="color: red;"></small>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                     <h6 class="mt-5"> <i>Go Back To Login Page</i></h6> <a  href="/"><h5>Login</h5></a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script>
+        function validateForm() {
+
+            let name = document.querySelector("#exampleInputText").value
+            let mail = document.querySelector("#exampleInputEmail").value
+            let password = document.querySelector("#exampleInputPassword").value
+            let entry = 0
+
+
+            if (name.length <= 2 || !/^[A-Za-z\s]+$/.test(name)) {
+                document.querySelector("#nameError").closest(".form-group").style.marginBottom = "30px"; //ADDITIONALLY ADD CLOSEST TO GET THE CORRECT ELEMET
+                document.querySelector("#nameError").innerHTML = "3 Letters Required"
+                entry++
+            } else {
+                document.querySelector("#nameError").innerHTML = ""
+            }
+            if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(mail)) {
+                 document.querySelector("#mailError").closest(".form-group").style.marginBottom = "30px";
+                document.querySelector("#mailError").innerHTML = "Valid Mail Id Required "
+                entry++
+            } else {
+                document.querySelector("#mailError").innerHTML = ""
+            }
+            if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password)) {
+              //  document.querySelector("#passwordError").style.marginLeft = "0px";
+               document.querySelector("#passwordError").closest(".form-group").style.marginBottom = "30px";
+                document.querySelector("#passwordError").innerHTML = "At least one small letter,one capital letter,one number, And Password length 8 is required "
+                entry++
+            } else {
+                document.querySelector("#passwordError").innerHTML = ""
+            }
+
+            return entry===0
+           
+         }
+
+    </script>
+
+</body>
+
+</html>
