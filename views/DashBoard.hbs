@@ -1,13 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <style>
+    .box {
+      width: 700px;
+      height: 400px;
+      padding: 10px;
+   
+    }
+
+    #navbar{
+      display: flex !important;
+    }
+    .spanName{
+      color:blue;
+    }
+    .logOut{
+      margin-left: 1200px;
+    }
+  </style>
 
 </head>
+
 <body>
-     <h1>You Are Entered</h1>
-     <a href="/logout">logout</a>
+  <h1>Welcome <span class="spanName"> {{userName}}</span> </h1>
+
+
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+
+      <div class="collapse navbar-collapse" id="navbarScroll">
+        <ul id="navbar" class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll " style="--bs-scroll-height: 100px;">
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Profile
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">User Name : {{userName}}</a></li>
+              <li><a class="dropdown-item" href="#">Emaill Id : {{userMail}}</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item dropdown ms-5">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Edit
+            </a>
+            
+            <ul class="dropdown-menu">
+              <div class="box">
+                {{!-- FORM --}}
+                <form id="updateForm" action="update" method="put"  onsubmit="return validateForm()">
+                  <p>User Name : <i><b>{{userName}}</b></i></p>   
+                 <label for="User Name">New User Name :</label> 
+                  <input type="text" name="newUserName" id="newUserName">
+                  <small  id="newUserNameError" style="margin-left: 10px; color:red"></small><br><br>
+                  <hr>
+
+                   <p>User Mail : <i><b>{{userMail}}</b></i></p>   
+                 <label for="User Mail">New User Mail :</label> 
+                  <input type="text" name="newUserMail" id="newUserMail">
+                  <small  id="newUserMailError" style="margin-left: 10px; color:red"></small><br><br>
+                  <hr>
+
+                   <label for="old Password">Old Password :</label> 
+                  <input type="password" name="oldUserPassword" id="oldUserPassword">
+                  <small  id="oldUserPasswordError" style="margin-left: 10px; color:red"></small><br><br>
+                     <label for="new Password">New Password :</label> 
+                  <input type="password" name="newUserPassword" id="newUserPassword">
+                  <small  id="newUserPasswordError" style="margin-left: 10px; color:red"></small><br><br>
+
+                  <button style="margin-left: 20px;" type="submit">Update</button>
+                 
+                </form>
+              </div>
+            </ul>
+          </li>
+
+
+          </li>
+          <li class="nav-item logOut">
+            <a class="nav-link" href="/logout">Logout</a>
+          </li>
+
+
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        let name=document.querySelector(".spanName").textContent
+        document.querySelector(".spanName").innerHTML=name.toUpperCase()
+      })
+
+      document.getElementById("updateForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        if( validateForm()){
+           fetch("/update",{
+          method:"put",
+          body:new URLSearchParams(new FormData(event.target)),
+
+        })
+        .then(response =>response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error("erorr",error))
+
+        }
+      
+      })
+
+        function validateForm() {
+        
+            let name = document.querySelector("#newUserName").value
+            let mail = document.querySelector("#newUserMail").value
+            let password = document.querySelector("#newUserPassword").value
+            let entry = 0
+
+
+            if (name.length <= 2 || !/^[A-Za-z\s]+$/.test(name)) {
+                document.querySelector("#newUserNameError").innerHTML = "3 Letters Required"
+                entry++
+            } else {
+                document.querySelector("#newUserNameError").innerHTML = ""
+            }
+            if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(mail)) {
+      
+                document.querySelector("#newUserMailError").innerHTML = "Valid Mail Id Required "
+                entry++
+            } else {
+                document.querySelector("#newUserMailError").innerHTML = ""
+            }
+            if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password)) {
+             
+                document.querySelector("#newUserPasswordError").innerHTML = "At least one small letter,one capital letter,one number, And Password length 8 is required "
+                entry++
+            } else {
+                document.querySelector("#newUserPasswordError").innerHTML = ""
+            }
+            return entry===0
+           
+         }
+
+
+    </script>
+
+
 </body>
+
 </html>

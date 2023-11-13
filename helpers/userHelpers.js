@@ -17,12 +17,13 @@ let createUser = (userDetails)=> {
                 resolve({existingUser})//return existing user details
             }
            
-    
         }catch(error){
             reject(error)
         }
     })
 }
+
+
 
 module.exports = {
     createUser

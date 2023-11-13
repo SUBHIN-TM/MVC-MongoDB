@@ -14,6 +14,8 @@ let home=(req, res) => {
    
   }
 
+
+
 //GET SIGNUP PAGE
   let signUpGetPage= (req, res) => {
     res.render('signup');
@@ -29,12 +31,11 @@ let home=(req, res) => {
       .then((user) => {
         if(user.existingUser){
           console.log("this mail is already in database",user.existingUser.mail);
-          // console.error("cant proceed due to email already exists ",user.existingUser.mail);
            return res.status(401).render('signup',{replace: 'CHOOSE ANOTHER MAIL ITS ALREADY IN USE',enteredMail:userMail,enteredPassword:userPassword,enteredName:userName})
           //  return res.status(400).render('signup',{replace: 'CHOOSE ANOTHER MAIL ITS ALREADY IN USE',enteredMail:user.existingUser.mail,enteredPassword:user.existingUser.password,enteredName:user.existingUser.username})
 
         }else{
-          res.render('login')
+           res.render('login',{alert:"ok"})
         }  
       })
   
@@ -48,13 +49,13 @@ let home=(req, res) => {
 //LOGIN POST PAGE
   let loginPostPage=async (req,res) =>{
     try{
-      const {userMail,userPassword}=req.body
-    //   console.log(userMail,"\n",userPassword);
+      const {userMail,userPassword} = req.body
+       console.log( "Logined mail and password from [login post page] ","mail is:",userMail,"password is:",userPassword);
       const userDataBase=await User.findOne({mail:userMail}) //IT WILL RETURN EITHER OBJECT IF NOT FOUND IT WILL RETURN NULL
-      console.log(userDataBase,'database object shows');
-      
+      console.log("Logged user details finded from database [login post page] ",userDataBase);
+
       req.session.userDetails=userDataBase //session stored in the name=userDetails
-      console.log( req.session.userDetails,"session details");
+      console.log(" session created and stored user details to session [login post page]", req.session.userDetails);
 
       if(userDataBase === null){
       return res.render('login',{replaceMail:'User Does Not Exist You Should SignUp',enteredMail:userMail,enteredPassword:userPassword})
@@ -67,7 +68,9 @@ let home=(req, res) => {
       res.redirect('/dashBoard')
   
     }catch(error){
-  
+      console.error("erroe due to ",error);
+      res.status(500).render('error',{print:error})
+      
     }
   }
 
@@ -77,9 +80,28 @@ let home=(req, res) => {
   }
 
   let dashBoardPage= (req,res) =>{
-    res.render('DashBoard')
+    console.log("cookie show ",req.session.userDetails);
+    res.render('DashBoard',{userName:req.session.userDetails.username,userMail:req.session.userDetails.mail})
+
+  }
+
+  let updatePage=async(req,res) => {
+  try{
+    console.log("entered");
+    const {newUserName,newUserMail,oldUserPassword,newUserPassword} = req.body
+    console.log( "Logined mail and password from [update page] ","user name is:",newUserName, "mail is:",newUserMail,"old password is:",oldUserPassword,"new password is:",newUserPassword);
+    console.log("from session details",req.session.userDetails);
+    const userDataBase=await User.findOne({mail:req.session.userDetails.mail})
+    console.log("finded the original data from databse to check the password",userDataBase);
+
+  }catch(error){
+    console.error(error);
+    res.status(500).render('error',{print:error})
+
+  }
+
   }
 
  
 
-module.exports={home,signUpGetPage,signUpPostPage,loginPostPage,logoutPage,dashBoardPage}
+module.exports={home,signUpGetPage,signUpPostPage,loginPostPage,logoutPage,dashBoardPage,updatePage}
