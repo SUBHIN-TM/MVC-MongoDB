@@ -10,7 +10,7 @@
   <style>
     .box {
       width: 700px;
-      height: 400px;
+      height: 450px;
       padding: 10px;
    
     }
@@ -22,7 +22,7 @@
       color:blue;
     }
     .logOut{
-      margin-left: 1200px;
+      margin-left: 1100px;
     }
   </style>
 
@@ -49,7 +49,7 @@
           </li>
 
           <li class="nav-item dropdown ms-5">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle autoHide" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Edit
             </a>
             
@@ -65,22 +65,30 @@
 
                    <p>User Mail : <i><b>{{userMail}}</b></i></p>   
                  <label for="User Mail">New User Mail :</label> 
-                  <input type="text" name="newUserMail" id="newUserMail">
+                  <input type="text" name="newUserMail" id="newUserMail" value="{{userMail}}">
                   <small  id="newUserMailError" style="margin-left: 10px; color:red"></small><br><br>
                   <hr>
 
                    <label for="old Password">Old Password :</label> 
                   <input type="password" name="oldUserPassword" id="oldUserPassword">
-                  <small  id="oldUserPasswordError" style="margin-left: 10px; color:red"></small><br><br>
+                  <small  id="oldUserPasswordError" style="margin-left: 10px; color:red">{{passwordReplace}}</small><br><br>
                      <label for="new Password">New Password :</label> 
                   <input type="password" name="newUserPassword" id="newUserPassword">
                   <small  id="newUserPasswordError" style="margin-left: 10px; color:red"></small><br><br>
 
                   <button style="margin-left: 20px;" type="submit">Update</button>
+                   <button style="margin-left: 20px;" type="button" onclick="cancel()">Cancel</button>
+
                  
                 </form>
               </div>
             </ul>
+          </li>
+
+
+             </li>
+          <li style="margin-left: 60px;" class="nav-item deleteAccount">
+            <a class="nav-link" onclick="deleteAccount()">Delete Account</a>
           </li>
 
 
@@ -107,6 +115,8 @@
 
       document.getElementById("updateForm").addEventListener("submit", (event) => {
         event.preventDefault();
+          
+         document.getElementsByClassName('autoHide')[0].click(); //IT WILL NEVER HIDE AUTO,ONLY BY EDIT BUTTON CLICK
 
         if( validateForm()){
            fetch("/update",{
@@ -115,9 +125,26 @@
 
         })
         .then(response =>response.json())
-        .then(data => console.log(data))
+        .then(data => {
+          console.log(data)
+          if(data.success){
+            alert(data.message)
+            window.location.href = '/logout' 
+          }else{
+           console.log(data);
+           if(data.messageEmail){
+            document.querySelector('#newUserMailError').innerHTML=data.messageEmail
+           }if(data.messagePassword){
+            document.querySelector("#oldUserPasswordError").innerHTML = data.messagePassword;
+           }
+          
+          }
+          
+        })
         .catch(error => console.error("erorr",error))
 
+        } else{
+          
         }
       
       })
@@ -128,7 +155,7 @@
             let mail = document.querySelector("#newUserMail").value
             let password = document.querySelector("#newUserPassword").value
             let entry = 0
-
+            
 
             if (name.length <= 2 || !/^[A-Za-z\s]+$/.test(name)) {
                 document.querySelector("#newUserNameError").innerHTML = "3 Letters Required"
@@ -153,6 +180,38 @@
             return entry===0
            
          }
+
+         function cancel(){
+          window.location.reload()
+         }
+
+
+         async function deleteAccount(){
+          const confirmation = confirm("Are You Sure Want To Delete Account")
+
+          if(confirmation){
+            try{
+              const response =  await fetch ("/delete",{
+                method : "DELETE"
+              })
+              const data = await response.json()
+              
+              if(data.success){
+                alert(data.message);
+                window.location.href = "/"
+              }else{
+                alert(data.message)
+              }
+
+            }catch(error){
+              console.error("eror in deleteing account due to",error)
+            }
+          }
+         }
+        
+    
+
+
 
 
     </script>

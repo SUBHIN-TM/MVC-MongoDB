@@ -11,5 +11,6 @@ router.post('/login',userController.loginPostPage)
 router.get('/logout',userController.logoutPage)
 router.get('/dashBoard',userController.dashBoardPage)
 router.put('/update',userController.updatePage)
+router.delete('/delete',userController.deletePage)
 
 module.exports = router;
